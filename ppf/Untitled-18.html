@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ege Endemik Flora & Biyoçeşitlilik Platformu</title>
+    <!-- Leaflet.js (Fiziki Harita Katmanı İçin) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Yasal Uyarı Metni (Sol Üst Sabit / Çapraz Vurgulu) -->
+    <aside class="legal-banner">
+        <div class="legal-header">🚨 YASAL UYARI & BİYO-MİRAS</div>
+        <p>Ege Bölgesi endemik gen kaynaklarının doğadan izinsiz toplanması ve sökülmesi <strong>2872 Sayılı Çevre Kanunu</strong> kapsamında ağır idari para ve hapis cezasına tabidir. Doğayı koru, mirasına sahip çık!</p>
+    </aside>
+
+    <header>
+        <div class="logo">🌿 EGE-FLORA AI <span class="sub-logo">| Biyoçeşitlilik Karar Destek Platformu</span></div>
+        <nav>
+            <a href="#bitkiler">10 Endemik Tür</a>
+            <a href="#simulator">İklim Simülatörü</a>
+            <a href="#harita">Fiziki Risk Haritası</a>
+            <a href="#ai-scanner">AI Teşhis Motoru</a>
+        </nav>
+    </header>
+
+    <!-- Hero Bölümü -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Ege Bölgesi Endemik Bitki Biyoçeşitliliği</h1>
+            <p>Herbaryum onaylı 10 spesifik tür, morfolojik analiz kartları, canlı AI tanılama ve ekolojik simülasyon aracı.</p>
+        </div>
+    </section>
+
+    <!-- 10 Endemik Tür Bilgi Kartları Kataloğu -->
+    <section id="bitkiler" class="container">
+        <div class="section-title">
+            <h2>Ege Bölgesi'nin 10 Hassas Endemik Türü</h2>
+            <p>Morfoloji, üreme biyolojisi, ekolojik uyum ve koruma statüleri</p>
+        </div>
+
+        <div class="filter-box">
+            <input type="text" id="searchInput" placeholder="Tür adı, il, familya veya morfolojik özellik ara..." onkeyup="filterPlants()">
+        </div>
+
+        <div class="grid-container" id="plantGrid">
+            <!-- JavaScript ile dinamik 10 kart oluşturulur -->
+        </div>
+    </section>
+
+    <!-- Biyoçeşitlilik & İklim Değişikliği Simülatörü -->
+    <section id="simulator" class="container simulator-section">
+        <div class="section-title-left">
+            <h2>Biyoçeşitlilik & İklim Değişikliği Simülatörü</h2>
+            <p>Sıcaklık ve insan müdahale parametrelerini değiştirerek Ege florasının 2050 yılındaki durumunu gözlemleyin.</p>
+        </div>
+
+        <div class="sim-card-wrapper">
+            <div class="sim-card">
+                <div class="sim-group">
+                    <div class="sim-label-row">
+                        <label for="tempSlider">Ortalama Sıcaklık Artışı (°C):</label>
+                        <span id="tempVal" class="slider-val">1.5°C</span>
+                    </div>
+                    <input type="range" id="tempSlider" min="0.0" max="4.0" step="0.5" value="1.5" oninput="updateSimulator()">
+                </div>
+
+                <div class="sim-group">
+                    <div class="sim-label-row">
+                        <label for="grazingSlider">Aşırı Otlatma & Tahrip Oranı (%):</label>
+                        <span id="grazingVal" class="slider-val">20%</span>
+                    </div>
+                    <input type="range" id="grazingSlider" min="0" max="100" step="5" value="20" oninput="updateSimulator()">
+                </div>
+
+                <div id="simStatusBox" class="sim-status-box status-medium">
+                    <span class="status-indicator"></span>
+                    <div id="simStatusText">
+                        <strong>Orta Risk:</strong> Spil Sümbülü ve Bozdağ Çanı habitat kaybı yaşıyor (%35 kayıp).
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Türkiye Fiziki Haritası Üzerinde Ege Risk Haritası -->
+    <section id="harita" class="container">
+        <div class="section-title">
+            <h2>Ege Bölgesi Fiziki Risk Haritası</h2>
+            <p>Türkiye topoğrafik haritası üzerinde 10 endemik bitki türünün koordinat tabanlı yayılışı</p>
+        </div>
+        <div id="map"></div>
+    </section>
+
+    <!-- Yapay Zeka Bitki Tanımlama Motoru -->
+    <section id="ai-scanner" class="container">
+        <div class="section-title">
+            <h2>Gelişmiş AI Bitki Tanımlama Motoru</h2>
+            <p>Ege Üniversitesi & Dokuz Eylül Üniversitesi veritabanı kriterlerine dayalı görsel tanılama sistemi</p>
+        </div>
+        <div class="ai-card">
+            <div class="upload-area" onclick="document.getElementById('imageUpload').click()">
+                <div class="upload-icon">📷</div>
+                <p>Analiz etmek istediğiniz bitki fotoğrafını buraya tıklayarak yükleyin</p>
+                <input type="file" id="imageUpload" accept="image/*" onchange="predictPlantImage(event)" style="display:none;">
+            </div>
+            <div id="imagePreviewContainer">
+                <img id="imagePreview" src="" alt="Yüklenen Bitki" style="display:none;">
+            </div>
+            <div id="aiResult" class="ai-result">
+                Lütfen cihazınızdan herhangi bir bitki fotoğrafı seçin.
+            </div>
+        </div>
+    </section>
+
+    <!-- Pop-up Bilgi Penceresi (Modal) -->
+    <div id="plantModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modalDetails"></div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS & Uygulama Kodu -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
